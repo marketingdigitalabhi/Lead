@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>User Leads</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6f8;
+      margin: 0;
+      padding: 20px;
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+    .table-container {
+      overflow-x: auto;
+      background: #fff;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.08);
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 14px;
+    }
+    th, td {
+      padding: 10px;
+      border-bottom: 1px solid #eee;
+      text-align: left;
+    }
+    th {
+      background: #fafafa;
+      font-weight: bold;
+    }
+    tr:hover {
+      background: #f9f9f9;
+    }
+    .loading {
+      text-align: center;
+      padding: 20px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h2>My Leads</h2>
+  <div id="output" class="table-container">
+    <div class="loading">Loading leads...</div>
+  </div>
+
+  <script>
+    // 🔹 Replace with your backend API URL deployed on Render
+    const API_URL = "https://your-backend-service.onrender.com";
+    // 🔹 Replace with the logged-in user’s ID (or fetch dynamically)
+    const userId = "user1";
+
+    async function loadLeads() {
+      try {
+        const res = await fetch(`${API_URL}/leads/${userId}`);
+        if (!res.ok) throw new Error("Failed to fetch data");
+        const data = await res.json();
+
+        const { headers, data: rows } = data;
+
+        // Build HTML table
+        let html = "<table><thead><tr>";
+        headers.forEach(h => {
+          html += `<th>${h}</th>`;
+        });
+        html += "</tr></thead><tbody>";
+
+        rows.forEach(row => {
+          html += "<tr>";
+          row.forEach(cell => {
+            html += `<td>${cell}</td>`;
+          });
+          html += "</tr>";
+        });
+
+        html += "</tbody></table>";
+        document.getElementById("output").innerHTML = html;
+      } catch (err) {
+        document.getElementById("output").innerHTML =
+          `<div class="loading">Error: ${err.message}</div>`;
+      }
+    }
+
+    loadLeads();
+  </script>
+</body>
+</html>
